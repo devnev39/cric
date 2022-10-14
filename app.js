@@ -56,11 +56,8 @@ app.route("/upload")
         // Redirect to main page with data
         const raw = fs.readFileSync(req.body.filename);
         const data = JSON.parse(raw);
-        const len = data.data.length;
-        let iter = len;
-        console.log(iter);
-        while(iter-- != 1){
-            const player = new Player(data.data[len-iter]);
+        for(let i=0;i<data.data.length;i++){
+            const player = new Player(data.data[i]);
             await player.save();
         }
         res.json({message : "Success !"});
