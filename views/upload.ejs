@@ -1,0 +1,24 @@
+<%- include('parent/header'); -%>
+<div>
+    <h1>Upload JSON file containing players  : </h1>
+    <label for="inputFile">Select : </label>
+    <input type="file" id="inputFile" name="inputFile">
+</div>
+<script>
+    $("#inputFile").on("change",(e) => {
+        if(e.target.files.length == 0){
+            alert("No files uploaded !");
+            return;
+        }
+        console.log(e.target.files);
+        const RESP = {
+            method : "POST",
+            headers : {
+                "Content-Type" : "application/json"
+            },
+            body : JSON.stringify({filename : e.target.files[0].name})
+        };
+        fetch("/upload",RESP).then((res) => res.json()).then(res => alert(res.message));
+    });
+</script>
+<%- include('parent/footer'); -%>

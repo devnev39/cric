@@ -1,0 +1,47 @@
+<%- include('parent/header'); -%>
+<div>
+    <h2>Enter teams : </h2>
+    <input type="number" id="noOfTeams" name="noOfTeams">
+    <label for="noOfTeams">Enter no. of teams  : </label>
+    <button onclick="enterClicked(this)">Enter</button>
+    <div id="teamEnter">
+        <select name="teamNoSelect" id="teamNoSelect"></select>
+        <input type="text" id="teamName" disabled>
+        <button id="submitButton" onclick="teamEntered(this)" disabled>Submit</button>
+    </div>
+</div>
+<script>
+    enterClicked = (e) => {
+        if(!$("#noOfTeams").val()){
+            alert("No team no. selected !");
+            return;
+        }
+        const v = +$("#noOfTeams").val();
+        let lst = Array.from(Array(v).keys()).map(e => `<option value="${e+1}">${e+1}</option>`);
+        lst.forEach(e => $("#teamNoSelect").append(e));
+        $("#teamName").attr("disabled",false);
+        $("#submitButton").attr("disabled",false);
+    }
+
+    teamEntered = async (e) => {
+        let teamNo = $("#teamNoSelect").val();
+        let name = $("#teamName").val();
+        if(!name || name == ""){
+            alert("Enter name of team !");
+            return;
+        }
+        let reponse = {
+            method : "POST",
+            headers : {
+                "Content-Type" : "application/json"
+            },
+            body : JSON.stringify({teamIndex : teamNo, teamName : name})
+        };
+        fetch("/teams",reponse).then(res => res.json()).then(res => {
+            if(res.message == "ok") alert("Success !");
+            else if(res.message == "update") alert("Updated !");
+            else alert("Error !");
+        });
+    }
+</script>
+<%- include('parent/footer'); -%>

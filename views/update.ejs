@@ -1,0 +1,178 @@
+<%- include ('parent/header');  -%>
+<div>
+    <div class="row">
+        <div class="col-6">
+            <h1 class="srNo">Sr No. <%= player.SRNO %></h1>
+            <br>
+            <div class="playerView">
+                <div class="playerViewContent">
+                    <div class="row">
+                        <div class="col">
+                            <label for="playerName">Name : </label>
+                        </div>
+                        <div class="col col-inf">
+                            <input type="text" id="playerName" name="playerName" value='<%= player.Name %>' disabled>
+                            <button class="btn btn-primary" onclick="copy('#playerName')">C</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="playerViewContent">
+                    <div class="row">
+                        <div class="col">
+                            <label for="playerCountry">Country : </label>
+                        </div>
+                        <div class="col col-inf">
+                            <input type="text" id="playerCountry" value='<%= player.Country %>' disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="playerViewContent">
+                    <div class="row">
+                        <div class="col">
+                            <label for="playerRole">Player Role : </label>
+                        </div>
+                        <div class="col col-inf">
+                            <input type="text" id="playerRole" value='<%= player.PlayingRole %>' disabled>        
+                        </div>
+                    </div>
+                </div>
+                <div class="playerViewContent">
+                    <div class="row">
+                        <div class="col">
+                            <label for="playerMatches">Matches : </label>
+                        </div>
+                        <div class="col col-inf">
+                            <input type="text" id="playerMatches" value='<%= player.IPLMatches %>' disabled>        
+                        </div>
+                    </div>
+                </div>
+                <div class="playerViewContent">
+                    <div class="row">
+                        <div class="col">
+                            <label for="playerCUA">CUA : </label>
+                        </div>
+                        <div class="col col-inf">
+                            <input type="text" id="playerCUA" value='<%= player.CUA %>' disabled>        
+                        </div>
+                    </div>
+                </div>
+                <div class="playerViewContent">
+                    <div class="row">
+                        <div class="col">
+                            <label for="playerBasePrice">Base Price : </label>
+                        </div>
+                        <div class="col col-inf">
+                            <input type="text" id="playerBasePrice" value='<%= player.BasePrice %>' disabled>        
+                        </div>
+                    </div>
+                </div>
+                <div class="playerViewContent">
+                    <div class="row">
+                        <div class="col">
+                            <label for="playerLastTeam">Last Team : </label>
+                        </div>
+                        <div class="col col-inf">
+                            <input type="text" id="playerLastTeam" value='<%= player.IPL2022Team %>' disabled>        
+                        </div>
+                    </div>
+                </div>
+                <div class="playerViewContent">
+                    <div class="row">
+                        <div class="col">
+                            <label for="playerImgURL">Image URL : </label>
+                        </div>
+                        <div class="col col-inf">
+                            <!-- <div class="row"> -->
+                                <div class="col">
+                                    <input onchange="imgUrlChanged(this)" type="text" id="playerImgURL" value='<%= player.IMGURL %>'>
+                                </div>
+                                <!-- <div class="col-2">
+                                    <button class="btn btn-primary" onclick="loadImage(this)">Fetch</button>
+                                </div> -->
+                            <!-- </div> -->
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6" id="imgDiv">
+            <img src="<%= player.IMGURL %>" id="imgUrl" height="500" width="500">
+        </div>
+    </div>
+    <div class="row control">
+        <div class="col center">
+            <button class="btn btn-primary" onclick="back(this)">Back</button>
+            <button class="btn btn-primary" onclick="next(this)">Next</button>
+            <button class="btn btn-primary" onclick="update(this)">Update</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    copy  = (e) => {
+        // let $temp = $("<input>");
+        // $("body").append($temp);
+        // $temp.val($(e).val()).select();
+        // document.execCommand("copy");
+        // $temp.remove();
+        window.open(`https://www.google.com/search?tbm=isch&q=${$(e).val()}`);
+        
+    }
+
+    back = (e) => {
+        let lst = window.location.href.split("/");
+        if(lst[lst.length-1] > 1){
+            lst[lst.length-1] = +lst[lst.length-1]-1;
+            window.location.replace(lst.join("/"));
+        }else alert("No zero index !");
+    }
+
+    loadImage = (e) => {
+        let src = $("#playerImgURL").val();
+        if(src == "" || src == undefined){
+            alert("No url !");
+            return;
+        }
+        loadImg(src);
+    }
+
+    next = (e) => {
+        let lst = window.location.href.split("/");
+        lst[lst.length-1] = +lst[lst.length-1]+1;
+        window.location.replace(lst.join("/"));
+    }
+
+    loadImg = (src) => {
+        $("#imgUrl").prop("src",src);
+    }
+
+    imgUrlChanged = (e) => {
+        if(e.value) loadImg(e.value)
+        else alert("No url !");
+    }
+
+    update = (e) => {
+        if($("#imgUrl").attr("src")){
+            if($("#imgUrl").prop("complete") && $("#imgUrl").prop("naturalHeight") != 0){
+                let obj = <%- JSON.stringify(player) %>;
+                const reponse = {
+                    method : "POST",
+                    headers : {
+                        "Content-Type" : "application/json"
+                    },
+                    body : JSON.stringify({url : $("#imgUrl").attr("src")})
+                }
+                // fetch(`${obj.SRNO}`,reponse).then(res => res.json()).then(res => {
+                //     if(res.status == 200) alert("Success !")
+                //     else alert(res.status);
+                // });
+            }else{
+                alert("Image not found !");
+            }
+        }else{
+            alert("No url entered !");
+        }
+    }
+</script>
+<%- include ('parent/footer');  -%>
