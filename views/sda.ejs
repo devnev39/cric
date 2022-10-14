@@ -1,0 +1,60 @@
+<%- include ('parent/header');  -%>
+<div class="row">
+    <div class="col-lg-8 offset-md-3">
+        <table class="table w-auto">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Country</th>
+                <th scope="col">PlayingRole</th>
+              </tr>
+            </thead>
+            <tbody id="tbBody">
+            </tbody>
+        </table>
+        <div>
+            <input type="number" id="seekNumber" value="<%= tableLen %>" hidden>
+            <button>Back</button>
+            <button>Next</button>
+        </div>
+    </div>
+</div>
+<!-- <tr>
+    <th scope="row">1</th>
+    <td>Mark</td>
+    <td>Otto</td>
+    <td>@mdo</td>
+  </tr> -->
+<script>
+    $("body").on("load",(e) => {
+        const current = +$("#seekNumber").val();
+        if(current){
+            const response = {
+                method : "POST",
+                headers : {
+                    "Content-Type" : "applicaion/json"
+                },
+                body : JSON.stringify({type : 1,current : current})
+            };
+            fetch("/sda",response).then(resp => resp.json()).then(resp => {
+                if($("#tbBody").children().length){
+                    $("#tbBody").children().remove();
+                }
+                for(let i=0;i<resp.data.length;i++) $("#tbBody").append(createRow(resp.data[i]));
+            });
+            
+            $("#seekNumber").val(current-1);
+        }
+    });
+    createRow = (obj) =>{
+        const str = `<tr>
+                    <th scope="row">${obj.SRNO}</th>
+                    <td>${obj.Name}</td>
+                    <td>${obj.Country}</td>
+                    <td>${obj.PlayingRole}</td>
+                    </tr>`
+        return str;
+    }
+</script>
+<%- include ('parent/footer');  -%>

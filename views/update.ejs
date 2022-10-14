@@ -163,10 +163,10 @@
                     },
                     body : JSON.stringify({url : $("#imgUrl").attr("src")})
                 }
-                // fetch(`${obj.SRNO}`,reponse).then(res => res.json()).then(res => {
-                //     if(res.status == 200) alert("Success !")
-                //     else alert(res.status);
-                // });
+                fetch(`${obj.SRNO}`,reponse).then(res => res.json()).then(res => {
+                    if(res.status == 200) alert("Success !")
+                    else alert(res.status);
+                });
             }else{
                 alert("Image not found !");
             }

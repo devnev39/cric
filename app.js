@@ -8,6 +8,10 @@ const PORT = 3000;
 
 const app = express();
 
+const SDATableLen = 15;
+
+let __DBLEN = 0;
+
 // 1. Set EJS
 // 2. static files
 // 3. BodyParser
@@ -44,6 +48,25 @@ const teamSchema = new mongoose.Schema({
 
 const Player = mongoose.model("Player",playerSchema);
 const Team = mongoose.model("Team",teamSchema);
+
+app.get("/",(req,res) => {
+    res.render("router",{title : "Router"});
+});
+
+app.route("/sda")
+.get(async (req,res) => {
+    __DBLEN = await Player.countDocuments();
+    let seekLen = 1;
+    if(len > SDATableLen) seekLen = Math.ceil(__DBLEN/SDATableLen);
+    res.render("sda",{title : "SDA",tableLen : seekLen});
+})
+.post((req,res) => {
+    // ** SET DBLEN WHEN UPDATED !
+    const opt = req.body;
+    if(opt.type == 1){
+        
+    }
+}); 
 
 app.route("/upload")
 .get((req,res) => {
