@@ -1,60 +1,125 @@
 <%- include ('parent/header');  -%>
-    <div class="playerView">
-        <div class="row">
-            <div class="col">
-                <label for="playerName">Name : </label>
-            </div>
-            <div class="col">
-                <input type="text" placeholder="name" id="playerName">
+    <div class="row">
+        <div class="col-6">
+            <h1>New Player</h1>
+            <div class="playerView">
+                <div class="row">
+                    <div class="col">
+                        <label for="playerName">Name* : </label>
+                    </div>
+                    <div class="col">
+                        <input type="text" placeholder="name" id="playerName">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="playerCountry">Country* : </label>
+                    </div>
+                    <div class="col">
+                        <input type="text" placeholder="country" id="playerCountry">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="playerRole">Playing Role* : </label>
+                    </div>
+                    <div class="col">
+                        <input type="text" placeholder="role" id="playerRole">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="playerBasePrice">Base Price* : </label>
+                    </div>
+                    <div class="col">
+                        <input type="number" placeholder="basePrice" id="playerBasePrice">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="playerAuctPrice">Auctioned Price* : </label>
+                    </div>
+                    <div class="col">
+                        <input type="number" placeholder="auctioned price" id="playerAuctPrice">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="playerCUA">CUA : </label>
+                    </div>
+                    <div class="col">
+                        <input type="text" placeholder="cua" id="playerCUA">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="playerTeam">IPL Team : </label>
+                    </div>
+                    <div class="col">
+                        <input type="text" placeholder="team" id="playerTeam">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="playerImg">Img Url* :  </label>
+                    </div>
+                    <div class="col">
+                        <input type="text" placeholder="url" id="playerImg">
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <label for="playerCountry">Country : </label>
-            </div>
-            <div class="col">
-                <input type="text" placeholder="country" id="playerCountry">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <label for="playerRole">Playing Role : </label>
-            </div>
-            <div class="col">
-                <input type="text" placeholder="role" id="playerRole">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <label for="playerBasePrice">Base Price : </label>
-            </div>
-            <div class="col">
-                <input type="number" placeholder="basePrice" id="playerBasePrice">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <label for="playerAuctPrice">Auctioned Price : </label>
-            </div>
-            <div class="col">
-                <input type="number" placeholder="auctioned price" id="playerAuctPrice">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <label for="playerCUA">CUA : </label>
-            </div>
-            <div class="col">
-                <input type="text" placeholder="cua" id="playerCUA">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <label for="playerTeam">IPL Team : </label>
-            </div>
-            <div class="col">
-                <input type="text" placeholder="name" id="playerTeam">
-            </div>
+        <div class="col-6" id="imgDiv">
+            <img id="playerImgShow" src="" alt="" width="500" height="500">
         </div>
     </div>
+    
+    <div class="row control">
+        <div class="col center">
+            <button class="btn btn-primary" onclick="insert(this)">Insert</button>
+        </div>
+    </div>
+    <script>
+        $(document).ready(() => {
+            $("#playerImg").on("change",(e) => {
+                $("#playerImgShow").prop("src",e.target.value);
+            });
+
+            insert = (e) => {
+                const obj = {
+                    Name : $("#playerName").val(),
+                    Country : $("#playerCountry").val(),
+                    PlayingRole : $("#playerRole").val(),
+                    BasePrice : $("#playerBasePrice").val(),
+                    AuctionedPrice : $("#playerAuctPrice").val(),
+                    IMGURL : $("#playerImgShow").prop("src")
+                };
+                console.log(obj);
+                for(let key of Object.keys(obj)){
+                    if(obj[key] == "" || obj[key] == undefined){
+                        alert("* field must be filled !");
+                        return;
+                    }
+                }
+                if(!$("#playerImgShow").prop("complete")){
+                    alert("Enter valid url !");
+                    return;
+                }
+                obj.CUA = $("#playerCUA").val();
+                obj.IPL2022Team = $("#playerTeam").val();
+                
+                const response = {
+                    method : "POST",
+                    headers : {
+                        "Content-Type" : "application/json"
+                    },
+                    body : JSON.stringify(obj)
+                };
+                fetch("/new",response).then(resp => resp.json()).then(resp => {
+                    if(resp.status == 200) alert(`Success ! SRNO : ${resp.srno}`);
+                    else alert(resp.status);
+                }); 
+            }
+        });
+    </script>
 <%- include ('parent/footer');  -%>

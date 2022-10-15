@@ -74,6 +74,21 @@ app.route("/sda")
     }
 }); 
 
+app.route("/new")
+.get((req,res) => {
+    res.render("new",{title : "New"});
+})
+.post(async (req,res) => {
+    const len = await Player.countDocuments();
+    let opt = req.body;
+    opt.SRNO = len+1;
+    const player = new Player(opt);
+    player.save((err,result) => {
+        if(err) res.json({status : err});
+        else res.json({status : 200,srno : opt.SRNO});
+    });
+});
+
 app.route("/upload")
 .get((req,res) => {
     res.render("upload",{title : "Upload"});
