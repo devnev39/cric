@@ -1,24 +1,31 @@
 <%- include ('parent/header');  -%>
-<div class="row">
-    <div class="col-lg-8 offset-md-3">
-        <table class="table w-auto">
-            <thead>
+<div class="row main">
+    <div class="col-lg-8 offset-md-2">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Country</th>
                 <th scope="col">PlayingRole</th>
+                <th scope="col">BasePrice</th>
+                <th scope="col">Auct.Price</th>
+                <th scope="col">CUA</th>
+                <th scope="col">IPLTEAM</th>
+                <th scope="col">Remove</th>
               </tr>
             </thead>
             <tbody id="tbBody">
             </tbody>
         </table>
-        <div>
-            <input type="number" id="seekNumber" value="<%= tableLen %>" hidden>
-            <button>Back</button>
-            <button>Next</button>
-        </div>
     </div>
+    <div class="row">
+        <div class="col-lg-8 offset-md-2">
+            <input type="number" id="seekNumber" value="1" hidden>
+            <button class="btn btn-primary" onclick="back('#seekNumber')">Back</button>
+            <button class="btn btn-primary" onclick="next('#seekNumber')">Next</button>
+        </div>
+    </div>    
 </div>
 <!-- <tr>
     <th scope="row">1</th>
@@ -27,13 +34,13 @@
     <td>@mdo</td>
   </tr> -->
 <script>
-    $("body").on("load",(e) => {
-        const current = +$("#seekNumber").val();
-        if(current){
+    $(document).ready(() => {
+        fetchTableData = () => {
+            console.log(current);
             const response = {
                 method : "POST",
                 headers : {
-                    "Content-Type" : "applicaion/json"
+                    "Content-Type" : "application/json"
                 },
                 body : JSON.stringify({type : 1,current : current})
             };
@@ -43,18 +50,62 @@
                 }
                 for(let i=0;i<resp.data.length;i++) $("#tbBody").append(createRow(resp.data[i]));
             });
-            
-            $("#seekNumber").val(current-1);
+        }
+
+        createRow = (obj) =>{
+            const str = `<tr>
+                        <th scope="row">${obj.SRNO}</th>
+                        <td>${obj.Name}</td>
+                        <td>${obj.Country}</td>
+                        <td>${obj.PlayingRole}</td>
+                        <td>${obj.BasePrice}</td>
+                        <td>${obj.AuctionedPrice}</td>
+                        <td>${obj.CUA}</td>
+                        <td>${obj.IPL2022Team}</td>
+                        <td><button class='btn btn-danger btn-sm' onclick='remove(${obj.SRNO})'>Remove</button></td>
+                        </tr>`
+            return str;
+        }
+
+        next = (e) => {
+            if(current < <%- total %>){
+                current = +$(e).val();
+                fetchTableData();
+                $(e).val(current+tableLen);
+            }
+        }
+
+        back = (e) => {
+            if(current > tableLen){
+                current = +$(e).val() - 2*tableLen;
+                fetchTableData();
+                $(e).val(current+tableLen);
+            }
+        }
+
+        remove = (e) => {
+            const response = {
+                method : "POST",
+                headers : {
+                    "Content-Type" : "application/json"
+                },
+                body : JSON.stringify({type : 2, srno : e})
+            };
+            fetch("/sda",response).then(res => res.json()).then(res => {
+                if(res.status == 200) alert("Success !");
+                else alert(res.status);
+                fetchTableData();
+            });
+        }
+
+        let current = +$("#seekNumber").val();
+        const tableLen = <%- tableLen %>;
+        if(current){
+            fetchTableData();
+            $("#seekNumber").val(current+tableLen);
         }
     });
-    createRow = (obj) =>{
-        const str = `<tr>
-                    <th scope="row">${obj.SRNO}</th>
-                    <td>${obj.Name}</td>
-                    <td>${obj.Country}</td>
-                    <td>${obj.PlayingRole}</td>
-                    </tr>`
-        return str;
-    }
+    
+    
 </script>
 <%- include ('parent/footer');  -%>

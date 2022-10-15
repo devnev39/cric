@@ -2,7 +2,6 @@ const express = require("express");
 const fs = require("fs");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const { ifError } = require("assert");
 
 const PORT = 3000;
 
@@ -55,16 +54,23 @@ app.get("/",(req,res) => {
 
 app.route("/sda")
 .get(async (req,res) => {
-    __DBLEN = await Player.countDocuments();
-    let seekLen = 1;
-    if(len > SDATableLen) seekLen = Math.ceil(__DBLEN/SDATableLen);
-    res.render("sda",{title : "SDA",tableLen : seekLen});
+    const dataLen = await Player.countDocuments();
+    res.render("sda",{title : "SDA",tableLen : SDATableLen,total : dataLen});
 })
-.post((req,res) => {
-    // ** SET DBLEN WHEN UPDATED !
+.post(async (req,res) => {
+    // 1 -> get player list request
+    // 2 -> remove player from list request
     const opt = req.body;
     if(opt.type == 1){
-        
+        const count = opt.current;
+        const data = await Player.find({SRNO : {$gt : count-1, $lt : count+SDATableLen}});
+        res.json({data : data});
+    }
+    if(opt.type == 2){
+        await Player.deleteOne({SRNO : opt.srno});
+        let result = await Player.updateMany({SRNO : {$gt : opt.srno}},{$inc : {SRNO : -1}});
+        if(result.acknowledged) res.json({status : 200});
+        else res.json({status : "Error !"});
     }
 }); 
 
@@ -99,7 +105,7 @@ app.route("/teams")
     if(req.body){
         let res = await Team.find({No : req.body.teamIndex});
         if(res.length){
-            res[0].updateOne({No : req.body.teamIndex},{Name : req.body.teamName});
+            await res[0].updateOne({No : req.body.teamIndex},{Name : req.body.teamName});
             msg = "update";
         }else{
             const t = new Team({
