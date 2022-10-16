@@ -7,9 +7,29 @@ body{
     padding: 0 0 5% 0;
 }
 
-.playerView{
+.playerView,.profile-container,.stats{
     font-size: 1.5rem;
-    padding: 5% 0 0 0;
+    font-weight: 500;
+}
+
+input{
+    font-weight: 600;
+    font-size: 1.6rem;
+}
+
+.stats{
+    font-weight: 500;
+    color: #FF5252;
+    text-decoration-line: underline;
+    text-decoration-style: dashed;
+}
+
+ul{
+    list-style-type:disc;
+}
+
+.playerView{
+    padding-top: 5%;
 }
 
 .col-inf{

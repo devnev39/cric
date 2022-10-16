@@ -1,13 +1,33 @@
 <%- include('parent/header'); -%>
-<div>
-    <h2>Enter teams : </h2>
-    <input type="number" id="noOfTeams" name="noOfTeams">
-    <label for="noOfTeams">Enter no. of teams  : </label>
-    <button onclick="enterClicked(this)">Enter</button>
-    <div id="teamEnter">
-        <select name="teamNoSelect" id="teamNoSelect"></select>
-        <input type="text" id="teamName" disabled>
-        <button id="submitButton" onclick="teamEntered(this)" disabled>Submit</button>
+<div class="h-100 d-flex align-items-center justify-content-center">
+    <div class="w-50">
+        <h2 class="pb-5 pt-5">Enter teams : </h2>
+        <div class="pb-5">
+            <div class="row">
+                <div class="col">
+                    <label for="noOfTeams">Enter no. of teams  : </label>
+                </div>
+                <div class="col">
+                    <input class="mb-3" type="number" id="noOfTeams" name="noOfTeams">
+                </div>
+                <div class="col">
+                    <button onclick="enterClicked(this)">Enter</button>
+                </div>
+            </div>
+        </div>
+        <div id="teamEnter">
+            <div class="row">
+                <div class="col">
+                    <select class="w-50" name="teamNoSelect" id="teamNoSelect"></select>
+                </div>
+                <div class="col">
+                    <input type="text" id="teamName" disabled>
+                </div>
+                <div class="col">
+                    <button id="submitButton" onclick="teamEntered(this)" disabled>Submit</button>
+                </div>
+            </div>
+        </div>    
     </div>
 </div>
 <script>
@@ -24,7 +44,7 @@
     }
 
     teamEntered = async (e) => {
-        let teamNo = $("#teamNoSelect").val();
+        let teamNo = +$("#teamNoSelect").val();
         let name = $("#teamName").val();
         if(!name || name == ""){
             alert("Enter name of team !");

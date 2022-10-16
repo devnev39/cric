@@ -1,0 +1,80 @@
+<%- include('parent/header'); -%>
+<div class="main-container p-3">
+    <div class="row">
+        <div class="col-8">
+            <div class="profile-container pe-5 pt-5 rounded border">
+                <h1 class="ms-3 mb-5 pb-2 border-bottom">Player No : <%= player.SRNO %></h1>
+                <div class="row pb-5">
+                    <div class="col-4">
+                        <label for="playerName">Name : </label>
+                    </div>
+                    <div class="col-8">
+                        <input type="text" id="playerName" value="<%= player.Name %>" disabled>
+                    </div>
+                </div>
+                <div class="row pb-5">
+                    <div class="col-4">
+                        <label for="playerTeam">Last IPL Team : </label>
+                    </div>
+                    <div class="col-8">
+                        <input type="text" id="playerTeam" value="<%= player.IPL2022Team %>" disabled>
+                    </div>
+                </div>
+                <div class="row pb-5">
+                    <div class="col-4">
+                        <label for="playerCountry">Country : </label>
+                    </div>
+                    <div class="col-8">
+                        <input type="text" id="playerCountry" value="<%= player.Country %>" disabled>
+                    </div>
+                </div>
+                <div class="row pb-5">
+                    <div class="col-4">
+                        <label for="playerBasePrice">BasePrice : </label>
+                    </div>
+                    <div class="col-6">
+                        <input style="color: #FF5722;" type="text" id="playerBasePrice" value="<%= player.BasePrice %>" disabled>
+                    </div>
+                    <div class="col-2">
+                        <label>Lakhs</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4 ps-3">
+            <div class="profile-holder rounded border border-success">
+                <div class="d-flex justify-content-center">
+                    <img class="rounded" id="playerImage" src="<%= player.IMGURL %>" alt="">
+                </div>
+                <div class="stat-holder">
+                    <div class="d-flex justify-content-center">
+                        <img class="mt-2" id="nationImage" src="<%= player.flagURL %>" height="50" width="71.42" alt="">
+                    </div>
+                    
+                    <div class="stats">
+                        <ul>
+                            <li><%= player.CUA %></li>
+                            <li><%= player.PlayingRole %></li>
+                            <li><%= player.IPLMatches %> Matches</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary w-50">Previous</button>
+        </div>
+        <div class="col">
+            <button class="btn btn-success w-50">Bid</button>
+        </div>
+        <div class="col">
+            <button class="btn btn-primary w-50">Next</button>
+        </div>
+        <div class="col">
+            <button class="btn btn-info w-50">Jump To</button>
+        </div>
+    </div>
+</div>
+<%- include('parent/footer'); -%>

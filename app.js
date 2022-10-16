@@ -48,6 +48,16 @@ const teamSchema = new mongoose.Schema({
 const Player = mongoose.model("Player",playerSchema);
 const Team = mongoose.model("Team",teamSchema);
 
+function swap(json){
+    var ret = {};
+    for(var key in json){
+      ret[json[key]] = key;
+    }
+    return ret;
+}
+
+const mapping = swap(JSON.parse(fs.readFileSync("codes.json")));
+
 app.get("/",(req,res) => {
     res.render("router",{title : "Router"});
 });
@@ -120,7 +130,8 @@ app.route("/teams")
     if(req.body){
         let res = await Team.find({No : req.body.teamIndex});
         if(res.length){
-            await res[0].updateOne({No : req.body.teamIndex},{Name : req.body.teamName});
+            console.log(req.body.teamName);
+            const result =await Team.updateOne({No : req.body.teamIndex},{Name : req.body.teamName});
             msg = "update";
         }else{
             const t = new Team({
@@ -158,6 +169,16 @@ app.route("/update/:player")
     }else{
         res.json({status : "No url provided !"});
     }
+});
+
+app.route("/main/:srno")
+.get(async (req,res) => {
+    const player = await Player.find({SRNO : req.params.srno});
+    if(player.length){
+        player[0].flagURL = `https://countryflagsapi.com/png/${player[0].Country}`;
+        res.render("main",{title : "Main",player : player[0]});
+    }
+    
 });
 
 app.listen(PORT,() => {
