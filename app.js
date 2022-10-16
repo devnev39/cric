@@ -9,8 +9,6 @@ const app = express();
 
 const SDATableLen = 15;
 
-let __DBLEN = 0;
-
 // 1. Set EJS
 // 2. static files
 // 3. BodyParser
@@ -58,14 +56,15 @@ function swap(json){
 
 const mapping = swap(JSON.parse(fs.readFileSync("codes.json")));
 
+let __DBLEN = 0;
+
 app.get("/",(req,res) => {
     res.render("router",{title : "Router"});
 });
 
 app.route("/sda")
 .get(async (req,res) => {
-    const dataLen = await Player.countDocuments();
-    res.render("sda",{title : "SDA",tableLen : SDATableLen,total : dataLen});
+    res.render("sda",{title : "SDA",tableLen : SDATableLen,total : __DBLEN});
 })
 .post(async (req,res) => {
     // 1 -> get player list request
@@ -89,14 +88,14 @@ app.route("/new")
     res.render("new",{title : "New"});
 })
 .post(async (req,res) => {
-    const len = await Player.countDocuments();
     let opt = req.body;
-    opt.SRNO = len+1;
+    opt.SRNO = __DBLEN+1;
     const player = new Player(opt);
     player.save((err,result) => {
         if(err) res.json({status : err});
         else res.json({status : 200,srno : opt.SRNO});
     });
+    __DBLEN = await Player.countDocuments();
 });
 
 app.route("/upload")
@@ -176,11 +175,12 @@ app.route("/main/:srno")
     const player = await Player.find({SRNO : req.params.srno});
     if(player.length){
         player[0].flagURL = `https://countryflagsapi.com/png/${player[0].Country}`;
-        res.render("main",{title : "Main",player : player[0]});
+        res.render("main",{title : "Main",player : player[0],total : __DBLEN});
     }
     
 });
 
-app.listen(PORT,() => {
+app.listen(PORT,async () => {
+    __DBLEN = await Player.countDocuments();
     console.log(`Server started on ${PORT}`);
 });
