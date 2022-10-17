@@ -7,7 +7,24 @@
         <a href="/teams"><h1>Enter Teams</h1></a>
         <a href="/main/1"><h1>To Auction</h1></a>
         <a href="/stat"><h1>Team Stats</h1></a>
+        <button class="btn btn-danger" onclick="reset(this)">Reset</button>
     </div>
 </div>
-
+<script>
+    $(document).ready(() => {
+        reset = (e) => {
+            const reponse = {
+                method : "POST",
+                headers : {
+                    "Content-Type" : "application/json"
+                },
+                body : JSON.stringify({reset : true})
+            };
+            fetch("/reset",reponse).then(resp => resp.json()).then(resp => {
+                if(resp.status == 200) alert("Success !");
+                else alert(resp.status);
+            });
+        }
+    });
+</script>
 <%- include('parent/footer'); -%>

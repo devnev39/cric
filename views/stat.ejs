@@ -34,13 +34,23 @@
 
         createRow = (obj) => {
             const score = Math.round(((obj.AuctionedPrice-obj.SoldPrice)*100)/obj.AuctionedPrice,2);
-            const str = `<tr>
+            let str = `<tr>
                         <th scope="row">${obj.SRNO}</th>
                         <td>${obj.Name}</td>
                         <td>${obj.BasePrice}</td>
                         <td>${obj.AuctionedPrice}</td>
-                        <td>${obj.SoldPrice}</td>
-                        <td>${score}</td>
+                        <td>${obj.SoldPrice}</td>`;
+            if(score > 0){
+                str += `<td style="color : green;">${score}</td>
+                        </tr>`;
+                return str;
+            }
+            if(score < 0){
+                str += `<td style="color : red;">${score}</td>
+                        </tr>`;
+                return str;
+            }
+            str += `<td>${score}</td>
                         </tr>`;
             return str;
         }

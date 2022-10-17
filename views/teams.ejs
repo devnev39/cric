@@ -15,6 +15,17 @@
                 </div>
             </div>
         </div>
+        <div id="teamBudget">
+            <div class="row">
+                <div class="col-4">
+                    <label for="teamBudgetInput">Budget (Lakhs) : </label>
+                </div>
+                <div class="col-8">
+                    <input type="number" id="teamBudgetInput" value="6000" placeholder="In Lakhs">
+                </div>
+            </div>
+        </div>
+        <br>
         <div id="teamEnter">
             <div class="row">
                 <div class="col">
@@ -38,6 +49,7 @@
         }
         const v = +$("#noOfTeams").val();
         let lst = Array.from(Array(v).keys()).map(e => `<option value="${e+1}">${e+1}</option>`);
+        $("#teamNoSelect").children().remove();
         lst.forEach(e => $("#teamNoSelect").append(e));
         $("#teamName").attr("disabled",false);
         $("#submitButton").attr("disabled",false);
@@ -46,6 +58,7 @@
     teamEntered = async (e) => {
         let teamNo = +$("#teamNoSelect").val();
         let name = $("#teamName").val();
+        let teamBudget = +$("#teamBudgetInput").val();
         if(!name || name == ""){
             alert("Enter name of team !");
             return;
@@ -55,7 +68,7 @@
             headers : {
                 "Content-Type" : "application/json"
             },
-            body : JSON.stringify({teamIndex : teamNo, teamName : name})
+            body : JSON.stringify({teamIndex : teamNo, teamName : name, teamBudget : teamBudget})
         };
         fetch("/teams",reponse).then(res => res.json()).then(res => {
             if(res.message == "ok") alert("Success !");

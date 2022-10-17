@@ -135,14 +135,14 @@ app.route("/teams")
         let res = await Team.find({No : req.body.teamIndex});
         if(res.length){
             console.log(req.body.teamName);
-            const result =await Team.updateOne({No : req.body.teamIndex},{Name : req.body.teamName});
+            const result =await Team.updateOne({No : req.body.teamIndex},{Name : req.body.teamName,Budget : req.body.teamBudget,Current:req.body.teamBudget});
             msg = "update";
         }else{
             const t = new Team({
                 No : req.body.teamIndex,
                 Name : req.body.teamName,
-                Budget : 4000,
-                Current : 4000,
+                Budget : req.body.teamBudget,
+                Current : req.body.teamBudget,
                 Score : 100
             });
             await t.save();
@@ -221,6 +221,21 @@ app.route("/main/:srno")
 
 app.get("/stat",(req,res) => {
     res.render("stat",{title : "Stats"});
+});
+
+app.route("/reset")
+.post(async (req,res) => {
+    if(req.body.reset){
+        mongoose.connection.db.dropCollection('teams');
+        const result = await Player.updateMany({SRNO : {$gt : 0}},{$set : {SOLD : "None"}});
+        if(result.acknowledged){
+            res.json({status : 200});
+        }else{
+            res.json({status : "Error from server !"});
+        }
+    }else{
+        res.json({status : "Error from client !"});
+    }
 });
 
 app.listen(PORT,async () => {
