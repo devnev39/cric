@@ -49,16 +49,6 @@ const teamSchema = new mongoose.Schema({
 const Player = mongoose.model("Player",playerSchema);
 const Team = mongoose.model("Team",teamSchema);
 
-function swap(json){
-    var ret = {};
-    for(var key in json){
-      ret[json[key]] = key;
-    }
-    return ret;
-}
-
-const mapping = swap(JSON.parse(fs.readFileSync("codes.json")));
-
 let __DBLEN = 0;
 
 let Teams = null;
@@ -236,6 +226,7 @@ app.route("/reset")
     }else{
         res.json({status : "Error from client !"});
     }
+    Teams = await Team.find();
 });
 
 app.listen(PORT,async () => {
