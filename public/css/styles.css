@@ -24,6 +24,28 @@ input{
     text-decoration-style: dashed;
 }
 
+.stat-label{
+    font-weight: 500;
+    font-size: 1.5rem;  
+    text-decoration: dashed underline;
+}
+
+.single-team{
+    margin: 3%;
+}
+
+.bid-div{
+    position: absolute;
+    width: 50%;
+    display: none;
+    background-color: white;
+    opacity: 100%;
+    left: 25%;
+    bottom: 40%;
+    font-size: 1.3rem;
+    border: solid red;
+}
+
 ul{
     list-style-type:disc;
 }

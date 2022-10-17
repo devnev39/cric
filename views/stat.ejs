@@ -1,0 +1,73 @@
+<%- include('parent/header'); -%>
+<div class="main-div">
+    <div class="team-container">
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(() => {
+        createTeamDiv = (team) => {
+            $(".team-container").append(`<div class='single-team border border-success round p-3' id='team-${team.No}-div'><div class='d-flex justify-content-center'>
+                <h1>${team.Name}</h1></div><div class='row m-3'>
+                    <div class='col stat-label ms-2'>Current : </div>
+                    <div class='col stats me-2'>${team.Current}</div>
+                    <div class='col stat-label ms-2'>Score :  </div>
+                    <div class='col stats me-2'>${team.Score}</div>
+                    </div><div id='team-${team.No}-data'>
+                    <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Base Price</th>
+                <th scope="col">Auctioned Price</th>
+                <th scope="col">Bid Price</th>
+                <th scope="col">Score</th>
+              </tr>
+            </thead>
+            <tbody id='team-${team.No}-tbBody'>
+            </tbody>
+            </table>
+            </div></div>`);
+        }
+
+        createRow = (obj) => {
+            const score = Math.round(((obj.AuctionedPrice-obj.SoldPrice)*100)/obj.AuctionedPrice,2);
+            const str = `<tr>
+                        <th scope="row">${obj.SRNO}</th>
+                        <td>${obj.Name}</td>
+                        <td>${obj.BasePrice}</td>
+                        <td>${obj.AuctionedPrice}</td>
+                        <td>${obj.SoldPrice}</td>
+                        <td>${score}</td>
+                        </tr>`;
+            return str;
+        }
+
+        populateTeamTable = (team) => {
+            createTeamDiv(team);
+            for(let player of team.Players){
+                $(`#team-${team.No}-tbBody`).append(createRow(player));
+            }
+        }
+
+        populateTeamDiv = (teams) => {
+            for(let team of teams){
+                populateTeamTable(team);
+            }
+        }
+
+        fetchTeams = () => {
+            $(".team-container").children().remove();
+            fetch("/getTeams").then(resp => resp.json()).then(resp => {
+                console.log(resp.teams);
+                populateTeamDiv(resp.teams);
+            });
+        }
+        fetchTeams();
+        // setInterval(fetchTeams,1000);
+    });
+</script>
+
+<%- include('parent/footer'); -%>

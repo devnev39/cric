@@ -39,6 +39,14 @@
                         <label>Lakhs</label>
                     </div>
                 </div>
+                <div class="row pb-5">
+                    <div class="col-4">
+                        <label for="playerSold">Sold : </label>
+                    </div>
+                    <div class="col-8">
+                        <input type="text" id="playerSold" value="<%= player.SOLD %>" disabled>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-4 ps-3">
@@ -67,7 +75,7 @@
             <button onclick="previous(this)" class="btn btn-primary w-50">Previous</button>
         </div>
         <div class="col">
-            <button onclick="bid(tihs)" class="btn btn-success w-50">Bid</button>
+            <button onclick="bid(this)" class="btn btn-success w-50">Bid</button>
         </div>
         <div class="col">
             <button onclick="next(this)" class="btn btn-primary w-50">Next</button>
@@ -76,12 +84,104 @@
             <button onclick="jump(this)" class="btn btn-info w-50">Jump To</button>
         </div>
     </div>
-    <div>
+    <div class="bid-div">
+        <div class="control m-3">
+            <div class="d-flex justify-content-center m-5">
+                <select id="teamSelect" onchange="teamSelect(this)"></select>
+            </div>
+            <div class="team-stat m-3">
+                <div class="row m-4 border-bottom round" style="font-size: 1.5rem;font-weight: 500; text-decoration-line:underline; text-decoration-style:dashed;">
+                    <div class="col-5">Name</div>
+                    <div class="col-5">Current Balance</div>
+                    <div class="col-2">Total Players</div>
+                </div>
+                <div class="row m-4 pb-2 border-bottom" id="team-data-row">
+                </div>
+            </div>
+            <div class="row m-4">
+                <label class="col-3 ps-5" style="font-weight: 500;color: #FF5722; text-decoration-line: underline;text-decoration-style: dashed;" for="playerBidPrice">Bid Price : </label>
+                <input class="col-9" style="width: 70%;" type="number" id="playerBidPrice">
+            </div>
+            <div class="d-flex justify-content-center">
+                <button class="btn btn-success" onclick="save(this)">Save</button>
+                <button class="btn btn-danger" onclick="closeDiv(this)">Close</button>
+            </div>
+        </div>
         
     </div>
 </div>
 <script>
     $(document).ready(()=> {
+        loadTeam = (team) => {
+            console.log(team);
+            $("#team-data-row").children().remove();
+            $("#team-data-row").append(`<div class='col-5'>${team.Name}</div>`);
+            $("#team-data-row").append(`<div class='col-5 stats'>${team.Current}</div>`);
+            if(team.Players){
+                $("#team-data-row").append(`<div class='col-2'>${team.Players.length}</div>`);
+            }else{
+                $("#team-data-row").append(`<div class='col-2'>0</div>`);
+            }
+        }
+
+        teamSelect = (e) => {
+            let no = +e.value.split(".")[0];
+            fetch("/getTeams").then(resp => resp.json()).then(resp => {
+                for(let team of resp.teams){
+                    if(team.No == no) loadTeam(team);
+                }
+            });
+        }
+
+        loadTeams = () => {
+            fetch("/getTeams").then(resp => resp.json()).then(resp => {
+                $("#teamSelect").children().remove();
+                for(let team of resp.teams){
+                    $("#teamSelect").append(`<option>${team.No}. ${team.Name}</option>`);
+                }
+                loadTeam(resp.teams[0]);
+            });
+        }
+
+        loadTeams();
+
+        closeDiv = (e) => {
+            $(".bid-div").css("display","none");
+        }
+
+        save = (e) => {
+            const teamIndex = +$("#teamSelect").val().split(".")[0];
+            const playerSrno = <%- player.SRNO %>;
+            const bidprice = +$("#playerBidPrice").val();
+            let pss = 1;
+            fetch("/getTeams").then(resp => resp.json()).then(resp => {
+                for(let team of resp.teams){
+                    if(team.No == teamIndex){
+                        if(team.Current > bidprice){
+                            if(bidprice <= 0 || bidprice == undefined || pss == 0){
+                                alert("Error !");
+                                return;
+                            }
+                            let reponse = {
+                                method : "POST",
+                                headers : {
+                                    "Content-Type" : "application/json"
+                                },
+                                body : JSON.stringify({teamIndex : teamIndex, player : playerSrno,bidPrice : bidprice})
+                            };
+                            fetch(`/main/${playerSrno}`,reponse).then(resp => resp.json()).then(resp => {
+                                if(resp.status == 200) alert("Sucsess !");
+                                else alert(resp.status);
+                            }).then(() => loadTeams());
+                        }else{
+                            alert("You don't have enough balance !");
+                        }
+                    }
+                }
+            });
+            
+        }
+
         previous = (e) => {
             const current = <%- player.SRNO %>;
             if(current == 1){
@@ -108,6 +208,10 @@
 
         jump = (e) => {
             let srno = +prompt("Enter sr no : ");
+            if(isNaN(srno)){
+                alert("Nan value not allowed !");
+                return;
+            }
             if(srno > <%- total %> || srno < 1){
                 alert("No player found with this index !");
                 return;
@@ -116,7 +220,7 @@
         }
 
         bid = (e) => {
-
+            $(".bid-div").css("display","block");
         }
     });
 </script>

@@ -32,7 +32,9 @@ const playerSchema = new mongoose.Schema({
     BasePrice : Number,
     IPL2022Team : String,
     AuctionedPrice : Number,
-    IMGURL : String
+    IMGURL : String,
+    SOLD : {type : String,default : "None"},
+    SoldPrice : Number
 });
 
 const teamSchema = new mongoose.Schema({
@@ -40,7 +42,8 @@ const teamSchema = new mongoose.Schema({
     Name : String,
     Budget : Number,
     Current : Number,
-    Players : {type : [playerSchema],default : undefined}
+    Players : {type : [playerSchema]},
+    Score : Number
 });
 
 const Player = mongoose.model("Player",playerSchema);
@@ -57,6 +60,8 @@ function swap(json){
 const mapping = swap(JSON.parse(fs.readFileSync("codes.json")));
 
 let __DBLEN = 0;
+
+let Teams = null;
 
 app.get("/",(req,res) => {
     res.render("router",{title : "Router"});
@@ -137,7 +142,8 @@ app.route("/teams")
                 No : req.body.teamIndex,
                 Name : req.body.teamName,
                 Budget : 4000,
-                Current : 4000
+                Current : 4000,
+                Score : 100
             });
             await t.save();
         }
@@ -145,6 +151,11 @@ app.route("/teams")
         msg = "error";
     }
     res.json({message : msg});
+    Teams = await Team.find();
+});
+
+app.get("/getTeams",(req,res) => {
+    res.json({teams : Teams});
 });
 
 app.route("/update/:player")
@@ -172,15 +183,49 @@ app.route("/update/:player")
 
 app.route("/main/:srno")
 .get(async (req,res) => {
+    if(isNaN(+req.params.srno)){
+        return;
+    }
     const player = await Player.find({SRNO : req.params.srno});
     if(player.length){
         player[0].flagURL = `https://countryflagsapi.com/png/${player[0].Country}`;
-        res.render("main",{title : "Main",player : player[0],total : __DBLEN});
+        res.render("main",{title : "Main",player : player[0], total : __DBLEN, teams : Teams});
     }
+})
+.post(async (req,res) => {
+    const teamIndex = req.body.teamIndex;
+    const playerIndex = req.body.player;
+    const bidPrice = req.body.bidPrice;
+    const team = await Team.find({No : teamIndex});
+    const player = await Player.find({SRNO : playerIndex});
+
+    if(player[0].SOLD != "None"){
+        res.json({status : "Player already taken !"});
+    }else{
+        player[0].SOLD = team[0].Name;
+        player[0].SoldPrice = bidPrice;
+        await player[0].save();
+        team[0].Players.push(player[0]);
+        await team[0].save();
+        let score = Math.round(((player[0].AuctionedPrice - bidPrice)*100)/player[0].AuctionedPrice,2);
     
+        const resp = await Team.updateOne({No : teamIndex},{$inc : {Current : -bidPrice,Score : score}});
+        if(resp.acknowledged){
+            res.json({status : 200});
+        }else{
+            res.json({status : "Error from server !"});
+        }
+    }
+    Teams = await Team.find();
+});
+
+app.get("/stat",(req,res) => {
+    res.render("stat",{title : "Stats"});
 });
 
 app.listen(PORT,async () => {
     __DBLEN = await Player.countDocuments();
+    Teams = await Team.find();
+    // console.log(Teams);
     console.log(`Server started on ${PORT}`);
 });
