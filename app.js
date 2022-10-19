@@ -216,13 +216,18 @@ app.get("/stat",(req,res) => {
 app.route("/reset")
 .post(async (req,res) => {
     if(req.body.reset){
-        mongoose.connection.db.dropCollection('teams');
-        const result = await Player.updateMany({SRNO : {$gt : 0}},{$set : {SOLD : "None"}});
-        if(result.acknowledged){
-            res.json({status : 200});
-        }else{
-            res.json({status : "Error from server !"});
+        try {
+            mongoose.connection.db.dropCollection('teams');
+            const result = await Player.updateMany({SRNO : {$gt : 0}},{$set : {SOLD : "None"}});
+            if(result.acknowledged){
+                res.json({status : 200});
+            }else{
+                res.json({status : "Error from server !"});
+            }    
+        } catch (error) {
+            res.json({status : error.message});
         }
+        
     }else{
         res.json({status : "Error from client !"});
     }

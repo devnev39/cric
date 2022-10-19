@@ -12,18 +12,22 @@
 </div>
 <script>
     $(document).ready(() => {
-        reset = (e) => {
-            const reponse = {
-                method : "POST",
-                headers : {
-                    "Content-Type" : "application/json"
-                },
-                body : JSON.stringify({reset : true})
-            };
-            fetch("/reset",reponse).then(resp => resp.json()).then(resp => {
-                if(resp.status == 200) alert("Success !");
-                else alert(resp.status);
-            });
+            reset = (e) => {
+            const res = confirm("Are you sure to reset the current state of DB Teams and DB players ?");
+            console.log(res);
+            if(res){
+                const reponse = {
+                    method : "POST",
+                    headers : {
+                        "Content-Type" : "application/json"
+                    },
+                    body : JSON.stringify({reset : true})
+                };
+                fetch("/reset",reponse).then(resp => resp.json()).then(resp => {
+                    if(resp.status == 200) alert("Success !");
+                    else alert(resp.status);
+                });
+            }
         }
     });
 </script>
