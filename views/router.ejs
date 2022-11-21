@@ -1,13 +1,87 @@
 <%- include('parent/header'); -%>
 <div class="row">
-    <div class="col-md-8 offset-md-4">
-        <a href="/upload"><h1>Upload Player JSON</h1></a> 
-        <a href="/update/1"><h1>Upload Image URLS</h1></a>
-        <a href="/sda"><h1>Search Delete Add Player</h1></a>
-        <a href="/teams"><h1>Enter Teams</h1></a>
-        <a href="/main/1"><h1>To Auction</h1></a>
-        <a href="/stat"><h1>Team Stats</h1></a>
-        <button class="btn btn-danger" onclick="reset(this)">Reset</button>
+    <div class="col-md-3">
+        
+    </div>
+    <div class="col-md-6">
+        <div class="router-option">
+            <button class="router_button">
+                <div class="row">
+                    <div class="col-md-2 icon">
+                        <i class="fa-solid fa-upload fa-2x"></i>
+                    </div>
+                    <div class="col-md-10">
+                        <a class="hide_ref" href="/upload"><h1>Upload Player JSON</h1></a> 
+                    </div>
+                </div>
+            </button>
+        </div>
+        <div class="router-option">
+            <button class="router_button">
+                <div class="row">
+                    <div class="col-md-2 icon">
+                        <i class="fa-solid fa-upload fa-2x"></i>
+                    </div>
+                    <div class="col-md-10">
+                        <a class="hide_ref" href="/update/1"><h1>Upload Image URLS</h1></a>
+                    </div>
+                </div>
+                
+            </button>
+        </div>
+        <div class="router-option">
+            <button class="router_button">
+                <div class="row">
+                    <div class="col-md-2 icon">
+                        <i class="fa-solid fa-user-pen fa-2x"></i>
+                    </div>
+                    <div class="col-md-10">
+                        <a class="hide_ref" href="/sda"><h1>Search Delete Add Player</h1></a>        
+                    </div>
+                </div>
+                    
+            </button>
+        </div>
+        <div class="router-option">
+            <button class="router_button">
+                <div class="row">
+                    <div class="col-md-2 icon">
+                        <i class="fa-solid fa-plus fa-2x"></i>
+                    </div>
+                    <div class="col-md-10">
+                        <a class="hide_ref" href="/teams"><h1>Enter Teams</h1></a>
+                    </div>
+                </div>
+            </button>
+        </div>
+        <div class="router-option">
+            <button class="router_button">
+                <div class="row">
+                    <div class="col-md-2 icon">
+                        <i class="fa-solid fa-gavel fa-2x"></i>
+                    </div>
+                    <div class="col-md-10">
+                        <a class="hide_ref" href="/main/1"><h1>To Auction</h1></a>
+                    </div>
+                </div>
+            </button>
+        </div>
+        <div class="router-option">
+            <button class="router_button">
+                <div class="row">
+                    <div class="col-md-2 icon">
+                        <i class="fa-solid fa-signal fa-2x"></i>
+                    </div>
+                    <div class="col-md-10">
+                        <a class="hide_ref" href="/stat"><h1>Team Stats</h1></a>
+                    </div>
+                </div>
+            </button>
+        </div>
+        <div class="d-flex align-items-center justify-content-center">
+            <button class="btn btn-danger" onclick="reset(this)">Reset</button>
+        </div>
+        
     </div>
 </div>
 <script>

@@ -82,3 +82,21 @@ button{
     text-align: center;
     justify-content: center;
 }
+
+.hide_ref{
+    text-decoration: none;
+    color: black;
+}
+
+.hide_ref:hover{
+    color: black;
+}
+
+.router-option{
+    padding: 0 0 2% 0;
+}
+
+.router_button{
+    border-radius: 10px;
+    width: 100%;
+}
