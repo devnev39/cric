@@ -11,7 +11,7 @@
                         <i class="fa-solid fa-upload fa-2x"></i>
                     </div>
                     <div class="col-md-10">
-                        <a class="hide_ref" href="/upload"><h1>Upload Player JSON</h1></a> 
+                        <a class="hide_ref" href="/upload" onclick="return authenticate(event);"><h1>Upload Player JSON</h1></a> 
                     </div>
                 </div>
             </button>
@@ -23,7 +23,7 @@
                         <i class="fa-solid fa-upload fa-2x"></i>
                     </div>
                     <div class="col-md-10">
-                        <a class="hide_ref" href="/update/1"><h1>Upload Image URLS</h1></a>
+                        <a class="hide_ref" href="/update/1" onclick="return authenticate(event);"><h1>Upload Image URLS</h1></a>
                     </div>
                 </div>
                 
@@ -36,7 +36,7 @@
                         <i class="fa-solid fa-user-pen fa-2x"></i>
                     </div>
                     <div class="col-md-10">
-                        <a class="hide_ref" href="/sda"><h1>Search Delete Add Player</h1></a>        
+                        <a class="hide_ref" href="/sda" onclick="return authenticate(event);"><h1>Search Delete Add Player</h1></a>
                     </div>
                 </div>
                     
@@ -49,7 +49,7 @@
                         <i class="fa-solid fa-plus fa-2x"></i>
                     </div>
                     <div class="col-md-10">
-                        <a class="hide_ref" href="/teams"><h1>Enter Teams</h1></a>
+                        <a class="hide_ref" href="/teams" onclick="return authenticate(event);"><h1>Enter Teams</h1></a>
                     </div>
                 </div>
             </button>
@@ -86,16 +86,33 @@
 </div>
 <script>
     $(document).ready(() => {
+            authenticate = async (e) => {
+                const pass = prompt("Enter secret pass : ");
+                if(pass){
+                    const request = {
+                        method : "POST",
+                        headers : {
+                            "Content-Type" : "application/json"
+                        },
+                        body : JSON.stringify({pass : pass})
+                    };
+                    const result = (await ((await fetch("/auth",request)).json())).result;
+                    if(!result){alert("Invalid pass !");e.preventDefault();}
+                    return result;
+                }
+                e.preventDefault();
+            }
             reset = (e) => {
             const res = confirm("Are you sure to reset the current state of DB Teams and DB players ?");
             console.log(res);
             if(res){
+                const pass = prompt("Enter secret pass : ");
                 const reponse = {
                     method : "POST",
                     headers : {
                         "Content-Type" : "application/json"
                     },
-                    body : JSON.stringify({reset : true})
+                    body : JSON.stringify({pass : pass,reset : true})
                 };
                 fetch("/reset",reponse).then(resp => resp.json()).then(resp => {
                     if(resp.status == 200) alert("Success !");

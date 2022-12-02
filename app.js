@@ -1,8 +1,9 @@
+require("dotenv").config();
 const express = require("express");
 const fs = require("fs");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-
+const bcrypt = require("bcrypt");
 const PORT = 3000;
 
 const app = express();
@@ -102,13 +103,17 @@ app.route("/upload")
         // Convert JSON to Obj
         // Append to new Mongo DB collection and overwrite if there is already by permission
         // Redirect to main page with data
-        const raw = fs.readFileSync(req.body.filename);
-        const data = JSON.parse(raw);
-        for(let i=0;i<data.data.length;i++){
-            const player = new Player(data.data[i]);
-            await player.save();
-        }
-        res.json({message : "Success !"});
+        bcrypt.compare(req.body.pass,process.env.SECRET,async (result) => {
+            if(result){
+                const raw = fs.readFileSync(req.body.filename);
+                const data = JSON.parse(raw);
+                for(let i=0;i<data.data.length;i++){
+                    const player = new Player(data.data[i]);
+                    await player.save();
+                }
+                res.json({message : "Success !"});
+            }else res.json({message : "Invalid pass !"});
+        });
     }else{
         res.json({message : "filename not received !"});
     }
@@ -217,13 +222,20 @@ app.route("/reset")
 .post(async (req,res) => {
     if(req.body.reset){
         try {
-            mongoose.connection.db.dropCollection('teams');
-            const result = await Player.updateMany({SRNO : {$gt : 0}},{$set : {SOLD : "None"}});
-            if(result.acknowledged){
-                res.json({status : 200});
-            }else{
-                res.json({status : "Error from server !"});
-            }    
+            bcrypt.compare(req.body.pass,process.env.SECRET).then(async (result) => {
+                console.log(result);
+                if(result){
+                    mongoose.connection.db.dropCollection('teams');
+                    const result = await Player.updateMany({SRNO : {$gt : 0}},{$set : {SOLD : "None"}});
+                    if(result.acknowledged){
+                        res.json({status : 200});
+                    }else{
+                        res.json({status : "Error from server !"});
+                    }    
+                }else{
+                    res.json({status : "Invalid pass !"});
+                }
+            })
         } catch (error) {
             res.json({status : error.message});
         }
@@ -232,6 +244,12 @@ app.route("/reset")
         res.json({status : "Error from client !"});
     }
     Teams = await Team.find();
+});
+
+app.post("/auth",(req,res) => {
+    bcrypt.compare(req.body.pass,process.env.SECRET,(err,result) => {
+        res.json({result : result});
+    });
 });
 
 app.listen(PORT,async () => {

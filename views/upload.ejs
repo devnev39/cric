@@ -11,12 +11,13 @@
             return;
         }
         console.log(e.target.files);
+        const pass = prompt("Enter secret pass : ");
         const RESP = {
             method : "POST",
             headers : {
                 "Content-Type" : "application/json"
             },
-            body : JSON.stringify({filename : e.target.files[0].name})
+            body : JSON.stringify({filename : e.target.files[0].name,pass : pass})
         };
         fetch("/upload",RESP).then((res) => res.json()).then(res => alert(res.message));
     });
