@@ -21,7 +21,7 @@ app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist/'
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended : false}));
 
-mongoose.connect("mongodb://127.0.0.1:27017/cric");
+mongoose.connect("mongodb+srv://devnev:Password-123@cluster0.uayzvos.mongodb.net/cric");
 
 const playerSchema = new mongoose.Schema({
     SRNO : Number,
